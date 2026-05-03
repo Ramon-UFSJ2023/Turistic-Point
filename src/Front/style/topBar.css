@@ -1,0 +1,15 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+body {
+  max-height: 60px;
+}
+.topbar {
+  background-color: #ffffa3;
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  height: 60px;
+  border-radius: 0px 0px 10px 10px;
+}
