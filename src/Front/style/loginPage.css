@@ -42,7 +42,7 @@ body {
   content: "";
   position: absolute;
   left: 0;
-  top: -55%;
+  top: -42%;
   height: 524px;
   width: 1px;
   background-color: #000;
@@ -84,4 +84,12 @@ body {
 
 .btn-login::placeholder {
   color: #abb2bf;
+}
+.link-cad{
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+#direction-login{
+  color: #449bff;
 }
