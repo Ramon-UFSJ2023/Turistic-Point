@@ -1,11 +1,11 @@
 import "../style/loginPage.css";
-import { TopBar } from "./TopBar";
+import { TopBar } from "../components/TopBar";
 import logoImg from "../assets/LogoSite1.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { supabase } from "../../Service/supabaseClient";
 
-export function LoginPage({ title, showLinkCadastro }) {
+export default function LoginPage() {
   const navigate = useNavigate();
   const goSingInPage = () => {
     navigate("/singInPage");
@@ -18,15 +18,19 @@ export function LoginPage({ title, showLinkCadastro }) {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .eq("password_hash", password);
+
     if (error) {
-      alert("Erro no login " + error.message);
-    } else {
+      alert("Erro na conexão " + error.message);
+    } else if (data && data.length > 0) {
       alert("Login feito com sucesso");
       navigate("/pageTeste");
+    } else {
+      alert("Email ou senha errados")
     }
     setLoading(false);
   };
@@ -38,7 +42,7 @@ export function LoginPage({ title, showLinkCadastro }) {
         <section className="content-box">
           <img src={logoImg} alt="" className="img-page-login-icon" />
           <div className="cont-info-login">
-            <h1 className="title-login-page">{title}</h1>
+            <h1 className="title-login-page">Login</h1>
             <form onSubmit={handleLogin}>
               <input
                 type="email"
@@ -60,26 +64,20 @@ export function LoginPage({ title, showLinkCadastro }) {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <button
-                type="submit"
-                className="btn-login"
-                disabled={loading}
-              >
+              <button type="submit" className="btn-login" disabled={loading}>
                 {loading ? "Entrando..." : "Login"}
               </button>
-              {showLinkCadastro && (
-                <h1 className="link-cad">
-                  Não está cadastrado?{" "}
-                  <span
-                    className="link-cad"
-                    id="direction-login"
-                    onClick={goSingInPage}
-                    style={{ cursor: "pointer" }}
-                  >
-                    Cadastre-se
-                  </span>
-                </h1>
-              )}
+              <h1 className="link-cad">
+                Não está cadastrado?{" "}
+                <span
+                  className="link-cad"
+                  id="direction-login"
+                  onClick={goSingInPage}
+                  style={{ cursor: "pointer" }}
+                >
+                  Cadastre-se
+                </span>
+              </h1>
             </form>
           </div>
         </section>
