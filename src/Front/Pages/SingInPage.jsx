@@ -27,7 +27,7 @@ export function SingleInPage(){
     const [name, setName] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
-    const [cpf, setCpf] = useState("");
+    const [cpf, setCPF] = useState("");
     const [birthDate, setBirthDate] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -116,7 +116,7 @@ export function SingleInPage(){
                             className="input-info-singIn"
                             placeholder="Digite aqui seu CPF"
                             value={cpf}
-                            onChange={(e) => setCpf(e.target.value)}
+                            onChange={(e) => setCPF(e.target.value)}
                             required
                         />
 
