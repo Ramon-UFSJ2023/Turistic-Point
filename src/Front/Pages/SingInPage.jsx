@@ -48,25 +48,48 @@ export function SingleInPage(){
 
         setLoading(true);
 
-        const salt = bcrypt.genSaltSync(10)
-        const passwordHash = bcrypt.hashSync(password, salt);
+        try {
+            const { data: existingUser, error: checkError } = await supabase
+                .from("users")
+                .select("username, email, cpf")
+                .or(`username.eq.${username}, email.eq.${email}, cpf.eq.${cpf}`);
 
-        const { error } = await supabase.from("users").insert([{
-            name: name,
-            username: username,
-            email: email,
-            cpf: cpf,
-            birth_date: birthDate,
-            password_hash: passwordHash
-        }]);
+            if (checkError) alert("Erro: " + checkError.message);
+            else {
+                if (existingUser && existingUser.length > 0) {
+                    const found = existingUser[0];
 
-        if (error) alert("Erro ao cadastrar: " + error.message);
-        else {
-            alert("Cadastro concluído!");
-            navigate("/pageTeste");
+                    if (found.username === username) alert("Este username já está em uso.");
+                    else if (found.email === email) alert("Este email já está cadastrado.");
+                    else if (found.cpf === cpf) alert("Este CPF já está cadastrado");
+
+                    setLoading(false);
+                    return;
+                }
+
+                const salt = bcrypt.genSaltSync(10)
+                const passwordHash = bcrypt.hashSync(password, salt);
+
+                const { error: insertError } = await supabase.from("users").insert([{
+                    name: name,
+                    username: username,
+                    email: email,
+                    cpf: cpf,
+                    birth_date: birthDate,
+                    password_hash: passwordHash
+                }]);
+
+                if (insertError) alert("Erro ao cadastrar: " + insertError.message);
+                else {
+                    alert("Cadastro concluído!");
+                    navigate("/pageTeste");
+                }
+            }
+        } catch (error) {
+            alert("Erro no processo: " + error.message);
+        } finally {
+            setLoading(false);
         }
-
-        setLoading(false);
     }
 
     return(
