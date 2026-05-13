@@ -80,19 +80,29 @@ export function SingleInPage(){
                 const salt = bcrypt.genSaltSync(10)
                 const passwordHash = bcrypt.hashSync(password, salt);
 
-                const { error: insertError } = await supabase.from("users").insert([{
+                const { data, error: insertError } = await supabase
+                .from("users")
+                .insert([
+                    {
                     name: name,
                     username: username,
                     email: email,
                     cpf: cpf,
                     birth_date: birthDate,
                     password_hash: passwordHash
-                }]);
+                    }
+                ])
+                .select()
+                .single();
 
-                if (insertError) alert("Erro ao cadastrar: " + insertError.message);
-                else {
+                if (insertError) {
+                    alert("Erro ao cadastrar: " + insertError.message);
+                } else {
                     alert("Cadastro concluído!");
-                    navigate("/pageTeste");
+
+                    navigate("/pageTeste", {
+                        state: { user: data }
+                    });
                 }
             }
         } catch (error) {

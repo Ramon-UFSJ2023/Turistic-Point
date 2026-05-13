@@ -36,7 +36,7 @@ export default function LoginPage() {
 
     if (passwordMatch) {
       alert("Login feito com seucesso");
-      navigate("/pageTeste");
+      navigate("/pageTeste", { state: { user } });
     } else alert("Email ou senha incorretos!");
 
     setLoading(false);

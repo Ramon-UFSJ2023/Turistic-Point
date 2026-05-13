@@ -1,0 +1,15 @@
+.container-btn{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn_logout{
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
