@@ -4,6 +4,7 @@ import logoImg from "../assets/LogoSite1.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { supabase } from "../../Service/supabaseClient";
+import bcrypt from 'bcryptjs';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -16,22 +17,28 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     setLoading(true);
 
-    const { data, error } = await supabase
+    const { data: user, error } = await supabase
       .from("users")
       .select("*")
       .eq("email", email)
-      .eq("password_hash", password);
+      .single();
 
-    if (error) {
-      alert("Erro na conexão " + error.message);
-    } else if (data && data.length > 0) {
-      alert("Login feito com sucesso");
-      navigate("/pageTeste");
-    } else {
-      alert("Email ou senha errados")
+    if (error || !user) {
+      alert("Email ou senha incorretos!");
+      setLoading(false);
+      return;
     }
+
+    const passwordMatch = bcrypt.compareSync(password, user.password_hash);
+
+    if (passwordMatch) {
+      alert("Login feito com seucesso");
+      navigate("/pageTeste");
+    } else alert("Email ou senha incorretos!");
+
     setLoading(false);
   };
 
