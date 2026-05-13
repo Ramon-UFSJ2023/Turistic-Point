@@ -1,23 +1,145 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { TopBar } from "../components/TopBar";
-import "../style/singInPage.css"
+import { supabase } from "../../Service/supabaseClient";
+import "../style/singInPage.css";
+import bcrypt from 'bcryptjs';
 
 export function SingleInPage(){
+    const navigate = useNavigate();
+
+    const [name, setName] = useState("");
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [cpf, setCpf] = useState("");
+    const [birthDate, setBirthDate] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const handleRegister = async (e) => {
+        e.preventDefault();
+
+        if (password != confirmPassword) {
+            alert("As senhas não coincidem!")
+            return;
+        }
+
+        setLoading(true);
+
+        const salt = bcrypt.genSaltSync(10)
+        const passwordHash = bcrypt.hashSync(password, salt);
+
+        const { error } = await supabase.from("users").insert([{
+            name: name,
+            username: username,
+            email: email,
+            cpf: cpf,
+            birth_date: birthDate,
+            password_hash: passwordHash
+        }]);
+
+        if (error) alert("Erro ao cadastrar: " + error.message);
+        else {
+            alert("Cadastro concluído!");
+            navigate("/pageTeste");
+        }
+
+        setLoading(false);
+    }
+
     return(
         <div className="SingInPage">
             <TopBar />
             <main className="container-content">
                 <section className="content-singIn">
                     <h1>User SingIn</h1>
-                    <div className="input-grid">
-                        <input type="text" name="" id="" className="input-info-singIn" placeholder="Digite aqui seu nome"/>
-                        <input type="email" name="" id="" className="input-info-singIn" placeholder="Digite aqui seu email"/>
-                        <input type="text" name="" id="" className="input-info-singIn" placeholder="Digite aqui seu CPF"/   >
-                        <input type="date" name="" id="" className="input-info-singIn" placeholder="Digite aqui sua data de nascimento"/>
-                        <input type="password" name="" id="" className="input-info-singIn" placeholder="Digite aqui sua senha"/>
-                        <input type="password" name="" id="" className="input-info-singIn" placeholder="Digite aqui sua senha"/>
-                        <input type="submit" value="" className="input-info-singIn"/>
-                    </div>
+                    <form className="input-grid" onSubmit={handleRegister}>
+                        <input 
+                            type="text"
+                            name=""
+                            id=""
+                            className="input-info-singIn" 
+                            placeholder="Digite aqui seu nome"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                        />
 
+                        <input
+                            type="text"
+                            name=""
+                            id=""
+                            className="input-info-singIn"
+                            placeholder="Digite aqui seu username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
+
+                        <input
+                            type="email"
+                            name=""
+                            id=""
+                            className="input-info-singIn"
+                            placeholder="Digite aqui seu email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+
+                        <input
+                            type="text"
+                            name=""
+                            id=""
+                            className="input-info-singIn"
+                            placeholder="Digite aqui seu CPF"
+                            value={cpf}
+                            onChange={(e) => setCpf(e.target.value)}
+                            required
+                        />
+
+                        <input
+                            type="date"
+                            name=""
+                            id=""
+                            className="input-info-singIn"
+                            placeholder="Digite aqui sua data de nascimento"
+                            value={birthDate}
+                            onChange={(e) => setBirthDate(e.target.value)}
+                            required
+                        />
+
+                        <input
+                            type="password"
+                            name=""
+                            id=""
+                            className="input-info-singIn"
+                            placeholder="Digite aqui sua senha"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+
+                        <input
+                            type="password"
+                            name=""
+                            id=""
+                            className="input-info-singIn"
+                            placeholder="Confirme sua senha"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                        />
+
+                        <input
+                            type="submit"
+                            value={loading ? "Cadastrando..." : "Cadastrar"}
+                            className="input-info-singIn"
+                            disabled={loading}
+                            style={{ cursor: loading ? "not-allowed" : "pointer" }}
+                        />
+                    </form>
                 </section>
             </main>
         </div>
