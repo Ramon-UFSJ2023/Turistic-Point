@@ -21,6 +21,11 @@ export const validateCPF = (cpf) => {
     return true;
 }
 
+export const validateName = (name) => {
+    const regex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/;
+    return regex.test(name);
+}
+
 export function SingleInPage(){
     const navigate = useNavigate();
 
@@ -41,6 +46,11 @@ export function SingleInPage(){
             return;
         }
 
+        if (!validateName(name)) {
+            alert("O nome deve conter apenas letras.");
+            return;
+        }
+
         if (!validateCPF(cpf)) {
             alert("CPF inválido! Verifique os números.")
             return;
@@ -58,7 +68,7 @@ export function SingleInPage(){
             else {
                 if (existingUser && existingUser.length > 0) {
                     const found = existingUser[0];
-
+                    
                     if (found.username === username) alert("Este username já está em uso.");
                     else if (found.email === email) alert("Este email já está cadastrado.");
                     else if (found.cpf === cpf) alert("Este CPF já está cadastrado");
